@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="https://icon-icons.com/downloadimage.php?id=142403&root=2336/SVG/&file=coffee_cup_hot_icon_142403.svg" type="image/x-icon">
+    <title>Hehadapps</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Web3.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.5.2/dist/web3.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Faculty+Glyphic&display=swap" rel="stylesheet" />
+    <style>
+      * {
+        font-family: "Faculty Glyphic", sans-serif;
+      }
+      .animate-spin {
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      /* Floating button styles */
+      .theme-toggle {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        z-index: 50;
+      }
+    </style>
+    <script>
+      tailwind.config = {
+        darkMode: 'class'
+      }
+    </script>
+  </head>
+  <body class="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 p-4 sm:p-8 transition-colors duration-200">
+    <!-- Floating Theme Toggle Button -->
+    <button id="themeToggle" class="theme-toggle p-3 rounded-full bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-all duration-200">
+      <!-- Sun icon for dark mode -->
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-800 dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+      </svg>
+      <!-- Moon icon for light mode -->
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-200 hidden dark:block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+      </svg>
+    </button>
+
+    <div class="max-w-2xl mx-auto space-y-8">
+      <!-- Header -->
+      <div class="text-center space-y-2">
+        <h1 class="text-4xl font-bold text-gray-900 dark:text-white">Hehadapps</h1>
+        <p class="text-gray-500 dark:text-gray-400">Interact with your smart contract</p>
+        <p class="text-gray-500 dark:text-gray-400">Contract Address: 0x6B852d74cB201F43E3d34Ba0222Eb8D9C00db3f7</p>
+      </div>
+
+      <!-- Wallet Connection -->
+      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 space-y-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-4">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+            </svg>
+            <div>
+              <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Wallet Connection</h2>
+              <p id="walletAddress" class="text-sm text-gray-500 dark:text-gray-400 hidden">Not connected</p>
+            </div>
+          </div>
+          <button id="connectWallet" class="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors duration-200">
+            <span class="mr-2">Connect Wallet</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Current Message -->
+      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 space-y-4">
+        <div class="flex justify-between items-center">
+          <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Current Message</h2>
+          <button id="refreshMessage" class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg transition-colors duration-200">Refresh</button>
+        </div>
+        <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
+          <p id="currentMessage" class="text-gray-700 dark:text-gray-300">No message set</p>
+        </div>
+      </div>
+
+      <!-- Update Message -->
+      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 space-y-4">
+        <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Update Message</h2>
+        <div class="flex space-x-4">
+          <input type="text" id="newMessage" placeholder="Enter new message" class="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 dark:disabled:bg-gray-700 dark:bg-gray-700 dark:text-white" disabled />
+          <button id="updateMessage" class="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed" disabled>Update</button>
+        </div>
+      </div>
+
+      <!-- Notifications -->
+      <div id="errorAlert" class="hidden bg-red-50 dark:bg-red-900/50 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 p-4 rounded-lg flex items-center space-x-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+        </svg>
+        <p id="errorMessage"></p>
+      </div>
+
+      <div id="successAlert" class="hidden bg-green-50 dark:bg-green-900/50 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-300 p-4 rounded-lg flex items-center space-x-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+        </svg>
+        <p id="successMessage"></p>
+      </div>
+    </div>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
